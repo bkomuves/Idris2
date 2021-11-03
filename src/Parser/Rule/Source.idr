@@ -42,10 +42,10 @@ export
 constant : Rule Constant
 constant
     = terminal "Expected constant" $ \case
-        CharLit c    =>  Ch <$> getCharLit c
-        DoubleLit d  => Just (Db d)
-        IntegerLit i => Just (BI i)
-        Ident s      => isConstantType (UN $ Basic s) >>=
+        CharLit c      => Ch <$> getCharLit c
+        FloatLit (m,e) => Just (Flt m e) 
+        IntegerLit i   => Just (BI i)
+        Ident s        => isConstantType (UN $ Basic s) >>=
                              \case WorldType => Nothing
                                    c         => Just c
         _            => Nothing

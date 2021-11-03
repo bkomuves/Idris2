@@ -304,6 +304,7 @@ jsConstant (BI i)   = show i ++ "n"
 jsConstant (Str s)  = jsString s
 jsConstant (Ch c)   = jsString $ singleton c
 jsConstant (Db f)   = show f
+jsConstant (Flt m e) = "{\"mantissa\":" ++ show m ++ ",\"exponent\":" ++ show e ++ "}"
 jsConstant WorldVal = esName "idrisworld"
 jsConstant (B8 i)   = show i
 jsConstant (B16 i)  = show i
@@ -322,6 +323,7 @@ jsConstant Bits64Type = "#t"
 jsConstant StringType = "#t"
 jsConstant CharType = "#t"
 jsConstant DoubleType = "#t"
+jsConstant FloatingType = "#t"
 jsConstant WorldType = "#t"
 
 -- Creates the definition of a binary arithmetic operation.

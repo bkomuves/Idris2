@@ -196,7 +196,6 @@ assert_linear = believe_me id
     id : (1 f : a -> b) -> a -> b
     id f = f
 
-
 export partial
 idris_crash : String -> a
 idris_crash = prim__crash _
@@ -253,24 +252,3 @@ public export
 defaultChar : FromChar Char
 defaultChar = %search
 
-%doubleLit fromDouble
-
-||| Interface for types that can be constructed from double literals.
-public export
-interface FromDouble ty where
-  constructor MkFromDouble
-  ||| Conversion from Double.
-  fromDouble : Double -> ty
-
-%allow_overloads fromDouble
-
-%inline
-public export
-FromDouble Double where
-  fromDouble s = s
-
-%defaulthint
-%inline
-public export
-defaultDouble : FromDouble Double
-defaultDouble = %search

@@ -328,6 +328,11 @@ Hashable Constant where
     Int32Type => h `hashWithSalt` 26
     Int64Type => h `hashWithSalt` 27
 
+    FloatingType =>
+      h `hashWithSalt` 28
+    Flt m e =>
+      h `hashWithSalt` 29 `hashWithSalt` m `hashWithSalt` e 
+
 export
 Hashable LazyReason where
   hashWithSalt h = \case

@@ -135,7 +135,8 @@ extractInteger tm = case tm of
 extractDouble : IPTerm -> Maybe Double
 extractDouble tm = case tm of
   PApp _ (PRef _ (MkKindedName _ _ (NS ns (UN (Basic n))))) k => case n of
-    "fromDouble" => extractDouble k
+--    "fromDouble" => extractDouble k
+--    "fromMantissaExpo" => extractFloatLit k  -- ???
     "negate"     => negate <$> extractDouble k
     _ => Nothing
   PPrimVal _ (Db d) => pure d

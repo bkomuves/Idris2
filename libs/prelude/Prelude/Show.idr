@@ -3,6 +3,7 @@ module Prelude.Show
 import Builtin
 import Prelude.Basics
 import Prelude.EqOrd
+--import Prelude.FloatingLit
 import Prelude.Num
 import Prelude.Types
 import Prelude.Interpolation
@@ -147,6 +148,13 @@ Show Int64 where
 export
 Show Double where
   showPrec = primNumShow prim__cast_DoubleString
+
+{-
+export
+Show FloatingLit where
+  showPrec = primNumShow $ \f => 
+    (prim__cast_IntegerString f.mantissa ++ "e" ++ prim__cast_IntString f.exponent)
+-}
 
 protectEsc : (Char -> Bool) -> String -> String -> String
 protectEsc p f s = f ++ (if firstCharIs p s then "\\&" else "") ++ s

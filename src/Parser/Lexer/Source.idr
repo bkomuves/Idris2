@@ -28,7 +28,7 @@ public export
 data Token
   -- Literals
   = CharLit String
-  | DoubleLit Double
+  | FloatLit (Integer,Int)
   | IntegerLit Integer
   -- String
   | StringBegin IsMultiline -- Whether is multiline string
@@ -58,7 +58,7 @@ export
 Show Token where
   -- Literals
   show (CharLit x) = "character " ++ show x
-  show (DoubleLit x) = "double " ++ show x
+  show (FloatLit x) = "floating " ++ show x
   show (IntegerLit x) = "literal " ++ show x
   -- String
   show (StringBegin Single) = "string begin"
@@ -89,7 +89,7 @@ export
 Pretty Token where
   -- Literals
   pretty (CharLit x) = pretty "character" <++> squotes (pretty x)
-  pretty (DoubleLit x) = pretty "double" <++> pretty x
+  pretty (FloatLit x) = pretty "floating" <++> pretty x
   pretty (IntegerLit x) = pretty "literal" <++> pretty x
   -- String
   pretty (StringBegin Single) = reflow "string begin"
@@ -175,8 +175,8 @@ dotIdent = is '.' <+> identNormal
 pragma : Lexer
 pragma = is '%' <+> identNormal
 
-doubleLit : Lexer
-doubleLit
+floatingLit : Lexer
+floatingLit
     = digits <+> is '.' <+> digits <+> opt
            (is 'e' <+> opt (is '-' <|> is '+') <+> digits)
 
@@ -309,6 +309,66 @@ fromOctLit str
              fromMaybe 0 (fromOct (reverse num))
              --        ^-- can't happen if the literal lexed correctly
 
+
+-- Parse a floating point literal (the name `fromFloatingLit` is already taken)
+fromFloatLit : String -> (Integer,Int)
+fromFloatLit str = goSign (unpack str) where
+
+  signedInteger : Bool -> Integer -> Integer
+  signedInteger False i = i
+  signedInteger True  i = negate i
+  
+  signedInt : Bool -> Int -> Int
+  signedInt False i = i
+  signedInt True  i = negate i
+
+  FloatingLit : Type
+  FloatingLit = (Integer,Int)
+  
+  mkFloatingLit : Integer -> Int -> FloatingLit
+  mkFloatingLit mantissa expo = (mantissa,expo)
+
+  mutual
+
+    -- sign part
+    goSign : List Char -> FloatingLit
+    goSign (c::cs) = case c of
+      '-' => goInt True  0 cs
+      '+' => goInt False 0 cs
+      _   => goInt False 0 (c::cs)
+    goSign [] = mkFloatingLit 0 0      -- this should never happen
+  
+    -- integral part
+    goInt : Bool -> Integer -> List Char -> FloatingLit
+    goInt isneg mantissa []      = mkFloatingLit (signedInteger isneg mantissa) 0
+    goInt isneg mantissa (c::cs) = case c of
+      '.' => goFrac isneg mantissa 0 cs
+      'e' => goExpo (signedInteger isneg mantissa) 0 cs
+      'E' => goExpo (signedInteger isneg mantissa) 0 cs
+      _   => goInt  isneg (10*mantissa + (cast (ord c - 48))) cs
+  
+    -- fractional part
+    goFrac : Bool -> Integer -> Int -> List Char -> FloatingLit
+    goFrac isneg mantissa expo []      = mkFloatingLit (signedInteger isneg mantissa) expo
+    goFrac isneg mantissa expo (c::cs) = case c of
+      'e' => goExpo (signedInteger isneg mantissa) expo cs
+      'E' => goExpo (signedInteger isneg mantissa) expo cs
+      _   => goFrac isneg (10*mantissa + (cast (ord c - 48))) (expo - 1) cs
+  
+    -- exponential part (sign)
+    goExpo : Integer -> Int -> List Char -> FloatingLit
+    goExpo m e0 []      = mkFloatingLit m e0
+    goExpo m e0 (c::cs) = case c of
+      '-' => goExpo1 m True  e0 0 cs
+      '+' => goExpo1 m False e0 0 cs
+      _   => goExpo1 m False e0 0 (c::cs)
+  
+    -- exponential part (after the sign)
+    goExpo1 : Integer -> Bool -> Int -> Int -> List Char -> FloatingLit
+    goExpo1 mantissa isneg e0 e []      = mkFloatingLit mantissa (e0 + signedInt isneg e)
+    goExpo1 mantissa isneg e0 e (c::cs) = goExpo1 mantissa isneg e0 (10*e + (ord c - 48)) cs
+
+
 mutual
   stringTokens : Bool -> Nat -> Tokenizer Token
   stringTokens multi hashtag
@@ -339,7 +399,7 @@ mutual
                   (exact . groupClose)
                   Symbol
       <|> match (choice $ exact <$> symbols) Symbol
-      <|> match doubleLit (DoubleLit . cast)
+      <|> match floatingLit (FloatLit . fromFloatLit)
       <|> match binUnderscoredLit (IntegerLit . fromBinLit . removeUnderscores)
       <|> match hexUnderscoredLit (IntegerLit . fromHexLit . removeUnderscores)
       <|> match octUnderscoredLit (IntegerLit . fromOctLit . removeUnderscores)

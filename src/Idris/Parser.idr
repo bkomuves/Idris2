@@ -1279,10 +1279,10 @@ directive fname indents
          n <- name
          atEnd indents
          pure (PrimChar n)
-  <|> do decorate fname Keyword $ pragma "doubleLit"
+  <|> do decorate fname Keyword $ pragma "floatingLit"
          n <- name
          atEnd indents
-         pure (PrimDouble n)
+         pure (PrimFloating n)
   <|> do decorate fname Keyword $ pragma "name"
          n <- name
          ns <- sepBy1 (decoratedSymbol fname ",")

@@ -2128,11 +2128,11 @@ setFromChar n
          put Ctxt (record { options $= setFromChar n } defs)
 
 export
-setFromDouble : {auto c : Ref Ctxt Defs} ->
+setFromFloating : {auto c : Ref Ctxt Defs} ->
               Name -> Core ()
-setFromDouble n
+setFromFloating n
     = do defs <- get Ctxt
-         put Ctxt (record { options $= setFromDouble n } defs)
+         put Ctxt (record { options $= setFromFloating n } defs)
 
 export
 addNameDirective : {auto c : Ref Ctxt Defs} ->
@@ -2205,15 +2205,15 @@ fromCharName
          pure $ fromCharName (primnames (options defs))
 
 export
-fromDoubleName : {auto c : Ref Ctxt Defs} ->
+fromFloatingLitName : {auto c : Ref Ctxt Defs} ->
                Core (Maybe Name)
-fromDoubleName
+fromFloatingLitName
     = do defs <- get Ctxt
-         pure $ fromDoubleName (primnames (options defs))
+         pure $ fromFloatingLitName (primnames (options defs))
 
 export
 getPrimNames : {auto c : Ref Ctxt Defs} -> Core PrimNames
-getPrimNames = [| MkPrimNs fromIntegerName fromStringName fromCharName fromDoubleName |]
+getPrimNames = [| MkPrimNs fromIntegerName fromStringName fromCharName fromFloatingLitName |]
 
 export
 getPrimitiveNames : {auto c : Ref Ctxt Defs} -> Core (List Name)

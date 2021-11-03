@@ -181,6 +181,9 @@ TTC Constant where
   toBuf b Int8Type = tag 26
   toBuf b Int16Type = tag 27
 
+  toBuf b FloatingType = tag 28
+  toBuf b (Flt m e) = do tag 29; toBuf b m; toBuf b e;
+
   fromBuf b
       = case !getTag of
              0 => do x <- fromBuf b; pure (I x)
@@ -211,6 +214,8 @@ TTC Constant where
              25 => do x <- fromBuf b; pure (I16 x)
              26 => pure Int8Type
              27 => pure Int16Type
+             28 => pure FloatingType
+             29 => do m <- fromBuf b; e <- fromBuf b; pure (Flt m e)
              _ => corrupt "Constant"
 
 export
@@ -901,7 +906,7 @@ TTC PrimNames where
       = do toBuf b (fromIntegerName l)
            toBuf b (fromStringName l)
            toBuf b (fromCharName l)
-           toBuf b (fromDoubleName l)
+           toBuf b (fromFloatingLitName l)
   fromBuf b
       = do i <- fromBuf b
            str <- fromBuf b

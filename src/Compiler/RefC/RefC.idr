@@ -122,6 +122,7 @@ cConstant (I32 x) = "(Value*)makeInt32(INT32_C("++ show x ++"))"
 cConstant (I64 x) = "(Value*)makeInt64("++ showInt64Min x ++")"
 cConstant (BI x) = "(Value*)makeIntegerLiteral(\""++ show x ++"\")"
 cConstant (Db x) = "(Value*)makeDouble("++ show x ++")"
+cConstant (Flt x y) = "(Value*)makeFloating("++ show x ++ "," ++ show y ++")"
 cConstant (Ch x) = "(Value*)makeChar("++ escapeChar x ++")"
 cConstant (Str x) = "(Value*)makeString("++ cStringQuoted x ++")"
 cConstant WorldVal = "(Value*)makeWorld()"
@@ -134,6 +135,7 @@ cConstant IntegerType = "Integer"
 cConstant StringType = "string"
 cConstant CharType = "char"
 cConstant DoubleType = "double"
+cConstant FloatingType = "Floating"
 cConstant WorldType = "f32"
 cConstant (B8 x)   = "(Value*)makeBits8(UINT8_C("++ show x ++"))"
 cConstant (B16 x)  = "(Value*)makeBits16(UINT16_C("++ show x ++"))"
@@ -158,6 +160,7 @@ extractConstant (B8 x)  = show x
 extractConstant (B16 x)  = show x
 extractConstant (B32 x)  = show x
 extractConstant (B64 x)  = show x
+-- extractConstant (Flt x y)  = ???
 extractConstant c = assert_total $ idris_crash ("INTERNAL ERROR: Unable to extract constant: " ++ cConstant c)
 -- not really total but this way this internal error does not contaminate everything else
 

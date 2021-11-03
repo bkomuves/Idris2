@@ -5,6 +5,7 @@ import PrimIO
 import Prelude.Basics
 import Prelude.EqOrd
 import Prelude.Interfaces
+import Prelude.FloatingLit     -- needed for the Double constants like "pi"
 import Prelude.Num
 import Prelude.Uninhabited
 

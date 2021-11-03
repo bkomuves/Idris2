@@ -33,7 +33,7 @@ import public Libraries.Utils.Binary
 ||| (Increment this when changing anything in the data format)
 export
 ttcVersion : Int
-ttcVersion = 67
+ttcVersion = 68 -- 67
 
 export
 checkTTCVersion : String -> Int -> Int -> Core ()
@@ -382,7 +382,7 @@ updatePrimNames p
     = record { fromIntegerName $= ((fromIntegerName p) <+>),
                fromStringName $= ((fromStringName p) <+>),
                fromCharName $= ((fromCharName p) <+>),
-               fromDoubleName $= ((fromDoubleName p) <+>)
+               fromFloatingLitName $= ((fromFloatingLitName p) <+>)
              }
 
 export

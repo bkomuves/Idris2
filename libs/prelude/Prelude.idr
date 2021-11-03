@@ -40,6 +40,7 @@ import public Prelude.EqOrd as Prelude
 import public Prelude.Interfaces as Prelude
 import public Prelude.Interpolation as Prelude
 import public Prelude.IO as Prelude
+import public Prelude.FloatingLit as Prelude
 import public Prelude.Num as Prelude
 import public Prelude.Ops as Prelude
 import public Prelude.Show as Prelude

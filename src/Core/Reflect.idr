@@ -515,6 +515,10 @@ Reify Constant where
              (UN (Basic "Db"), [(_, x)])
                   => do x' <- reify defs !(evalClosure defs x)
                         pure (Db x')
+             (UN (Basic "Flt"), [(_, x),(_, y)])
+                  => do x' <- reify defs !(evalClosure defs x)
+                        y' <- reify defs !(evalClosure defs y)   -- ???
+                        pure (Flt x' y')
              (UN (Basic "WorldVal"), [])
                   => pure WorldVal
              (UN (Basic "IntType"), [])
@@ -543,6 +547,8 @@ Reify Constant where
                   => pure CharType
              (UN (Basic "DoubleType"), [])
                   => pure DoubleType
+             (UN (Basic "FloatingType"), [])
+                  => pure FloatingType
              (UN (Basic "WorldType"), [])
                   => pure WorldType
              _ => cantReify val "Constant"
@@ -589,6 +595,10 @@ Reflect Constant where
   reflect fc defs lhs env (Db x)
       = do x' <- reflect fc defs lhs env x
            appCon fc defs (reflectiontt "Db") [x']
+  reflect fc defs lhs env (Flt x y)
+      = do x' <- reflect fc defs lhs env x
+           y' <- reflect fc defs lhs env y
+           appCon fc defs (reflectiontt "Flt") [x',y']
   reflect fc defs lhs env WorldVal
       = getCon fc defs (reflectiontt "WorldVal")
   reflect fc defs lhs env IntType
@@ -617,6 +627,8 @@ Reflect Constant where
       = getCon fc defs (reflectiontt "CharType")
   reflect fc defs lhs env DoubleType
       = getCon fc defs (reflectiontt "DoubleType")
+  reflect fc defs lhs env FloatingType
+      = getCon fc defs (reflectiontt "FloatingType")
   reflect fc defs lhs env WorldType
       = getCon fc defs (reflectiontt "WorldType")
 

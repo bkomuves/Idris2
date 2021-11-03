@@ -1,4 +1,5 @@
 1/1: Building DoubleLit (DoubleLit.idr)
-Main> MkInUnit 0.25 _
+Main> Just (MkInUnit 0.25 _)
 MkNewtype 123.456
+(1234567, -5)
 Main> Bye for now!

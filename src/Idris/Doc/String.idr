@@ -181,6 +181,7 @@ getDocsForPrimitive constant = do
   primDoc (Str s) = "Primitive value"
   primDoc (Ch c) = "Primitive value"
   primDoc (Db d) = "Primitive value"
+  primDoc (Flt _ _) = "Primitive value"
   primDoc WorldVal = "Primitive value"
 
   primDoc IntType = "Primitive type of bounded signed integers (backend dependent size)"
@@ -196,6 +197,7 @@ getDocsForPrimitive constant = do
   primDoc StringType = "Primitive type of strings"
   primDoc CharType = "Primitive type of characters"
   primDoc DoubleType = "Primitive type of double-precision floating-points"
+  primDoc FloatingType = "Primitive type of arbitrary-precision decimal floating-points"
   primDoc WorldType = "Primitive token for IO actions"
 
 public export

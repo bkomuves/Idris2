@@ -266,6 +266,7 @@ schConstant _ (Ch x)
         then "#\\" ++ cast x
         else "(integer->char " ++ show (the Int (cast x)) ++ ")"
 schConstant _ (Db x) = show x
+schConstant _ (Flt m e) = "(cons " ++ show m ++ " " ++ show e ++ ")"    -- ???
 schConstant _ WorldVal = "#f"
 schConstant _ IntType = "#t"
 schConstant _ Int8Type = "#t"
@@ -280,6 +281,7 @@ schConstant _ Bits64Type = "#t"
 schConstant _ StringType = "#t"
 schConstant _ CharType = "#t"
 schConstant _ DoubleType = "#t"
+schConstant _ FloatingType = "#t"
 schConstant _ WorldType = "#t"
 
 schCaseDef : Maybe String -> String

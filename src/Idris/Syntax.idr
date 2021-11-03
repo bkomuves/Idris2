@@ -307,7 +307,7 @@ mutual
        PrimInteger : Name -> Directive
        PrimString : Name -> Directive
        PrimChar : Name -> Directive
-       PrimDouble : Name -> Directive
+       PrimFloating : Name -> Directive
        CGAction : String -> String -> Directive
        Names : Name -> List String -> Directive
        StartExpr : PTerm' nm -> Directive
@@ -325,7 +325,7 @@ mutual
       , (UnboundImplicits False), (AmbigDepth 0)
       , (PairNames ph ph ph), (RewriteName ph ph)
       , (PrimInteger ph), (PrimString ph), (PrimChar ph)
-      , (PrimDouble ph), (CGAction "" ""), (Names ph [])
+      , (PrimFloating ph), (CGAction "" ""), (Names ph [])
       , (StartExpr (PRef EmptyFC ph)), (Overloadable ph)
       , (Extension ElabReflection), (DefaultTotality PartialOK)
       , (PrefixRecordProjections True), (AutoImplicitDepth 0)
@@ -357,7 +357,7 @@ mutual
       showDirective (PrimInteger _)      = "%integerLit n"
       showDirective (PrimString _)       = "%stringLit n"
       showDirective (PrimChar _)         = "%charLit n"
-      showDirective (PrimDouble _)       = "%doubleLit n"
+      showDirective (PrimFloating _)     = "%floatingLit n"
       showDirective (CGAction _ _)       = "--directive d"
       showDirective (Names _ _)          = "%name ty ns"
       showDirective (StartExpr _)        = "%start expr"

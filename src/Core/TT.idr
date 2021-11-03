@@ -11,6 +11,7 @@ import Decidable.Equality
 import Libraries.Data.NameMap
 import Libraries.Data.Primitives
 import Libraries.Text.PrettyPrint.Prettyprinter
+import Libraries.Text.PrettyPrint.Prettyprinter.Doc
 import Libraries.Text.PrettyPrint.Prettyprinter.Util
 
 import public Algebra
@@ -59,6 +60,7 @@ data Constant
     | Str String
     | Ch  Char
     | Db  Double
+    | Flt Integer Int
     | WorldVal
 
     | IntType
@@ -74,6 +76,7 @@ data Constant
     | StringType
     | CharType
     | DoubleType
+    | FloatingType
     | WorldType
 
 export
@@ -92,6 +95,7 @@ isConstantType (UN (Basic n)) = case n of
   "String"  => Just StringType
   "Char"    => Just CharType
   "Double"  => Just DoubleType
+  "Floating" => Just FloatingType
   "%World"  => Just WorldType
   _ => Nothing
 isConstantType _ = Nothing
@@ -111,6 +115,7 @@ isPrimType (B64 x)  = False
 isPrimType (Str x)  = False
 isPrimType (Ch  x)  = False
 isPrimType (Db  x)  = False
+isPrimType (Flt _ _)= False
 isPrimType WorldVal = False
 
 isPrimType Int8Type    = True
@@ -126,6 +131,7 @@ isPrimType Bits64Type  = True
 isPrimType StringType  = True
 isPrimType CharType    = True
 isPrimType DoubleType  = True
+isPrimType FloatingType= True
 isPrimType WorldType   = True
 
 -- TODO : The `TempXY` instances can be removed after the next release
@@ -169,6 +175,11 @@ constantEq (Ch x) (Ch y) = case decEq x y of
                                 Yes Refl => Just Refl
                                 No contra => Nothing
 constantEq (Db x) (Db y) = Nothing -- no DecEq for Doubles!
+constantEq (Flt m1 e1) (Flt m2 e2) = case decEq m1 m2 of
+  No  _    => Nothing
+  Yes Refl => case decEq e1 e2 of
+    No  _    => Nothing
+    Yes Refl => Just Refl 
 constantEq WorldVal WorldVal = Just Refl
 constantEq IntType IntType = Just Refl
 constantEq Int8Type Int8Type = Just Refl
@@ -179,6 +190,7 @@ constantEq IntegerType IntegerType = Just Refl
 constantEq StringType StringType = Just Refl
 constantEq CharType CharType = Just Refl
 constantEq DoubleType DoubleType = Just Refl
+constantEq FloatingType FloatingType = Just Refl
 constantEq WorldType WorldType = Just Refl
 constantEq _ _ = Nothing
 
@@ -197,6 +209,7 @@ Show Constant where
   show (Str x) = show x
   show (Ch x) = show x
   show (Db x) = show x
+  show (Flt m e) = show m ++ "E" ++ show e   -- ?? 
   show WorldVal = "%MkWorld"
   show IntType = "Int"
   show Int8Type = "Int8"
@@ -211,6 +224,7 @@ Show Constant where
   show StringType = "String"
   show CharType = "Char"
   show DoubleType = "Double"
+  show FloatingType = "Floating"
   show WorldType = "%World"
 
 export
@@ -228,6 +242,7 @@ Pretty Constant where
   pretty (Str x) = dquotes (pretty x)
   pretty (Ch x) = squotes (pretty x)
   pretty (Db x) = pretty x
+  pretty (Flt m e) = (pretty m) <+> Chara 'E' <+> (pretty e)
   pretty WorldVal = pretty "%MkWorld"
   pretty IntType = pretty "Int"
   pretty Int8Type = pretty "Int8"
@@ -242,6 +257,7 @@ Pretty Constant where
   pretty StringType = pretty "String"
   pretty CharType = pretty "Char"
   pretty DoubleType = pretty "Double"
+  pretty FloatingType = pretty "Floating"
   pretty WorldType = pretty "%World"
 
 export
@@ -259,6 +275,7 @@ Eq Constant where
   (Str x) == (Str y) = x == y
   (Ch x) == (Ch y) = x == y
   (Db x) == (Db y) = x == y
+  (Flt m1 e1) == (Flt m2 e2) = m1 == m2 && e1 == e2
   WorldVal == WorldVal = True
   IntType == IntType = True
   Int8Type == Int8Type = True
@@ -273,6 +290,7 @@ Eq Constant where
   StringType == StringType = True
   CharType == CharType = True
   DoubleType == DoubleType = True
+  FloatingType == FloatingType = True
   WorldType == WorldType = True
   _ == _ = False
 
@@ -294,6 +312,7 @@ constTag Int8Type = 13
 constTag Int16Type = 14
 constTag Int32Type = 15
 constTag Int64Type = 16
+constTag FloatingType = 17
 constTag _ = 0
 
 ||| Precision of integral types.

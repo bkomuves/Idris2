@@ -28,6 +28,7 @@ Ord Constant where
     Str x `compare` Str y = compare x y
     Ch x `compare` Ch y = compare x y
     Db x `compare` Db y = compare x y
+    Flt m1 e1 `compare` Flt m2 e2 = case compare m1 m2 of { LT => LT ; GT => GT ; EQ => compare e1 e2 }
     compare x y = compare (tag x) (tag y)
       where
         tag : Constant -> Int
@@ -59,6 +60,8 @@ Ord Constant where
         tag CharType = 25
         tag DoubleType = 26
         tag WorldType = 27
+        tag FloatingType = 28
+        tag (Flt _ _) = 29
 
 
 primFnEq : PrimFn a1 -> PrimFn a2 -> Maybe (a1 = a2)

@@ -307,13 +307,22 @@ mutual
              Just f =>
                let vfc = virtualiseFC fc in
                pure $ IApp vfc (IVar vfc f) (IPrimVal fc (Ch x))
-  desugarB side ps (PPrimVal fc (Db x))
-      = case !fromDoubleName of
+
+  -- doubles are now just doubles
+  desugarB side ps (PPrimVal fc (Db x)) = pure $ IPrimVal fc (Db x)
+
+  -- but we can desugar Flt 
+  desugarB side ps (PPrimVal fc (Flt m e))
+      = case !fromFloatingLitName of
              Nothing =>
-                pure $ IPrimVal fc (Db x)
+                pure $ IPrimVal fc (Flt m e)   -- we should probably convert to Double here
              Just f =>
-               let vfc = virtualiseFC fc in
-               pure $ IApp vfc (IVar vfc f) (IPrimVal fc (Db x))
+               let vfc = virtualiseFC fc 
+                   m' = IPrimVal fc (BI m) 
+                   e' = IPrimVal fc (I  e)  
+                   pval = apply (IVar fc mkpairname) [m', e']
+               in  pure $ IApp vfc (IVar vfc f) pval
+
   desugarB side ps (PPrimVal fc x) = pure $ IPrimVal fc x
   desugarB side ps (PQuote fc tm)
       = pure $ IQuote fc !(desugarB side ps tm)
@@ -1063,7 +1072,7 @@ mutual
              PrimInteger n => pure [IPragma [] (\nest, env => setFromInteger n)]
              PrimString n => pure [IPragma [] (\nest, env => setFromString n)]
              PrimChar n => pure [IPragma [] (\nest, env => setFromChar n)]
-             PrimDouble n => pure [IPragma [] (\nest, env => setFromDouble n)]
+             PrimFloating n => pure [IPragma [] (\nest, env => setFromFloating n)]
              CGAction cg dir => pure [IPragma [] (\nest, env => addDirective cg dir)]
              Names n ns => pure [IPragma [] (\nest, env => addNameDirective fc n ns)]
              StartExpr tm => pure [IPragma [] (\nest, env => throw (InternalError "%start not implemented"))] -- TODO!

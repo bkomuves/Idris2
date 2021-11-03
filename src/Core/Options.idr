@@ -107,7 +107,7 @@ record PrimNames where
   fromIntegerName : Maybe Name
   fromStringName : Maybe Name
   fromCharName : Maybe Name
-  fromDoubleName : Maybe Name
+  fromFloatingLitName : Maybe Name
 
 export
 primNamesToList : PrimNames -> List Name
@@ -294,8 +294,8 @@ setFromChar : Name -> Options -> Options
 setFromChar n = record { primnames->fromCharName = Just n }
 
 export
-setFromDouble : Name -> Options -> Options
-setFromDouble n = record { primnames->fromDoubleName = Just n }
+setFromFloating : Name -> Options -> Options
+setFromFloating n = record { primnames->fromFloatingLitName = Just n }
 
 export
 setExtension : LangExt -> Options -> Options
