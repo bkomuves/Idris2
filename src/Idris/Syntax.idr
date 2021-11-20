@@ -295,6 +295,7 @@ mutual
   public export
   data Directive : Type where
        Hide : Name -> Directive
+       Unhide : Name -> Directive
        Logging : Maybe LogLevel -> Directive
        LazyOn : Bool -> Directive
        UnboundImplicits : Bool -> Directive
@@ -318,7 +319,7 @@ mutual
 
   directiveList : List Directive
   directiveList =
-      [ (Hide ph), (Logging Nothing), (LazyOn False)
+      [ (Hide ph), (Unhide ph), (Logging Nothing), (LazyOn False)
       , (UnboundImplicits False), (AmbigDepth 0)
       , (PairNames ph ph ph), (RewriteName ph ph)
       , (PrimInteger ph), (PrimString ph), (PrimChar ph)
@@ -345,6 +346,7 @@ mutual
     where
       showDirective : Directive -> String
       showDirective (Hide _)             = "%hide name"
+      showDirective (Unhide _)           = "%unhide name"
       showDirective (Logging _)          = "%logging [topic] lvl"
       showDirective (LazyOn _)           = "%auto_lazy on|off"
       showDirective (UnboundImplicits _) = "%unbound_implicits"
