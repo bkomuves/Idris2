@@ -144,7 +144,8 @@ idrisTestsData = MkTestPool "Data and record types" [] Nothing
        -- Records, access and dependent update
        "record001", "record002", "record003", "record004", "record005",
        "record006", "record007", "record008", "record009", "record010",
-       "record011", "record012" ]
+       "record011", "record012",
+       "record014" ]              -- record013 is already in another pull request
 
 idrisTestsBuiltin : TestPool
 idrisTestsBuiltin = MkTestPool "Builtin types and functions" [] Nothing
@@ -180,7 +181,7 @@ idrisTestsTotality = MkTestPool "Totality checking" [] Nothing
        -- Totality checking
        "total001", "total002", "total003", "total004", "total005",
        "total006", "total007", "total008", "total009", "total010",
-       "total011", "total012"
+       "total011", "total012", "total013"
       ]
 
 -- This will only work with an Idris compiled via Chez or Racket, but at
